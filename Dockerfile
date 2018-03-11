@@ -19,5 +19,5 @@ RUN cpm install -g Carton
 RUN cpm install
 RUN carton install
 
-COPY app/ginpatu.pl /app/
-CMD carton exec --  perl ./ginpatu.pl 
+COPY app/ginpatu.psgi /app/
+CMD carton exec --  plackup --port $PORT ./ginpatu.psgi
