@@ -19,5 +19,4 @@ RUN cpm install -g Carton
 RUN cpm install
 
 RUN carton install
-COPY app ${APP_PATH}
-CMD carton exec -- ${APP_PATH}/ginpatu.pl -l http://0.0.0.0:$PORT
+CMD carton exec --  perl ./ginpatu.pl 
