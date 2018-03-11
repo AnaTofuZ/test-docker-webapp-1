@@ -14,9 +14,10 @@ WORKDIR ${APP_PATH}
 COPY cpanfile ${APP_PATH}
 
 
-RUN cpanm App::cpm
+RUN cpanm -nq App::cpm
 RUN cpm install -g Carton
 RUN cpm install
-
 RUN carton install
+
+COPY app/ginpatu.pl /app/
 CMD carton exec --  perl ./ginpatu.pl 

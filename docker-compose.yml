@@ -3,10 +3,7 @@ services:
     app:
         container_name: anatofuz-app
         build: .
-        command: carton exec -- app/ginpatu.pl
         environment:
             PORT: 3000
         tty: true
         stdin_open: true
-        volumes:
-            - .:/app/
