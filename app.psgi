@@ -36,7 +36,7 @@ sub {
             my $sort   = "rank";
             my $target;
 
-            if ($event->text =~ /(.+)を([人気|日付])で/){
+            if ($event->text =~ /(.+)を(人気|日付)で/){
                 $target = $1;
                 $sort   = $2 eq "人気" ? "rank" : "date";
             }
