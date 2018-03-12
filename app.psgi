@@ -32,16 +32,18 @@ sub {
     for my $event (@{ $events }) {
         if ($event->is_user_event && $event->is_message_event && $event->is_text_message) {
             my $offset = 1;
+            my $hits   = 10;
             my $target;
 
             if ($event->text =~ /(.+)をあと([0-9]+)個/) {
                 $target = $1;
-                $offset = $2;
+                $hits   = $2;
+                $offset = 10;
             } else {
                 $target = $event->text;
             }
 
-            my $items = $dmm->item("DMM.R18", +{ keyword => $target, hits => 10, offset => $offset })->{items};
+            my $items = $dmm->item("DMM.R18", +{ keyword => $target, hits => $hits, offset => $offset })->{items};
 
             if ( @{$items} == 0){
                 my $messages = LINE::Bot::API::Builder::SendMessage->new()->add_text( text => "${target}は見つかんなかった…");
@@ -54,7 +56,7 @@ sub {
                 alt_text => 'this is a dmm videos',
             );
 
-            for my $i (0..9) {
+            for my $i (0..$hits-1) {
 
                 my $image_url = $items->[$i]->{imageURL}->{large};
                 my $movie_uri = $items->[$i]->{sampleMovieURL}->{size_476_306};
