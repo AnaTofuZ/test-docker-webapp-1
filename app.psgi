@@ -10,7 +10,6 @@ use WebService::YDMM;
 use utf8;
 use Encode;
 
-
 my $bot = LINE::Bot::API->new(
     channel_secret => $ENV{LINE_SECRET},
     channel_access_token => $ENV{LINE_TOKEN},
@@ -43,7 +42,14 @@ sub {
             }
 
             my $items = $dmm->item("DMM.R18", +{ keyword => $target, hits => 10, offset => $offset })->{items};
-    
+
+            if ( @{$items} == 0){
+                my $messages = LINE::Bot::API::Builder::SendMessage->new()->add_text( text => "${target}は見つかんなかった…");
+                my $res = $bot->reply_message($event->reply_token,$messages->build);
+                ... unless $res->is_success; # error handling
+                next;
+            }
+
             my $carousel = LINE::Bot::API::Builder::TemplateMessage->new_carousel(
                 alt_text => 'this is a dmm videos',
             );
@@ -52,6 +58,7 @@ sub {
 
                 my $image_url = $items->[$i]->{imageURL}->{large};
                 my $movie_uri = $items->[$i]->{sampleMovieURL}->{size_476_306};
+                my $item_uri  = $items->[$i]->{affiliateURLsp};
                 my $title = $items->[$i]->{title};
 
                 next unless (defined $movie_uri);
@@ -62,6 +69,10 @@ sub {
 
                 if ($movie_uri =~ /http:/){
                     $movie_uri =~ s/http:/https:/;
+                }
+
+                if ($item_uri =~ /http:/){
+                    $item_uri =~ s/http:/https:/;
                 }
 
 
@@ -76,6 +87,9 @@ sub {
                 )->add_uri_action(
                     label   => '動画で致す',
                     uri     => $movie_uri,
+                )->add_uri_action(
+                    label   => 'DMMで見る',
+                    uri     => $item_uri,
                 );
                 $carousel->add_column($col->build);
             }
