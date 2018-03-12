@@ -36,15 +36,14 @@ sub {
             my $sort   = "rank";
             my $target;
 
-            if ($event->text =~ /(.+)を(人気|日付)で/){
-                $target = $1;
-                $sort   = $2 eq "人気" ? "rank" : "date";
-            }
 
             if ($event->text =~ /(.+)をあと([0-9]+)個/) {
                 $target = $1;
                 $hits   = $2;
                 $offset = 10;
+            } elsif ($event->text =~ /(.+)を(人気|日付)で/){
+                $target = $1;
+                $sort   = $2 eq "人気" ? "rank" : "date";
             } else {
                 $target = $event->text;
             }
