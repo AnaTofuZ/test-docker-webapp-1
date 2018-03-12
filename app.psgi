@@ -33,7 +33,13 @@ sub {
         if ($event->is_user_event && $event->is_message_event && $event->is_text_message) {
             my $offset = 1;
             my $hits   = 10;
+            my $sort   = "rank";
             my $target;
+
+            if ($event->text =~ /(.+)を([人気|日付])で/){
+                $target = $1;
+                $sort   = $2 eq "人気" ? "rank" : "date";
+            }
 
             if ($event->text =~ /(.+)をあと([0-9]+)個/) {
                 $target = $1;
@@ -43,7 +49,7 @@ sub {
                 $target = $event->text;
             }
 
-            my $items = $dmm->item("DMM.R18", +{ keyword => $target, hits => $hits, offset => $offset })->{items};
+            my $items = $dmm->item("DMM.R18", +{ sort => $sort, service => "digital", floor => "videoa", keyword => $target, hits => $hits, offset => $offset })->{items};
 
             if ( @{$items} == 0){
                 my $messages = LINE::Bot::API::Builder::SendMessage->new()->add_text( text => "${target}は見つかんなかった…");
